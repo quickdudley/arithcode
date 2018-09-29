@@ -1,0 +1,44 @@
+name:           arithcode
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/quickdudley/arithcode#readme>
+homepage:       https://github.com/quickdudley/arithcode#readme
+bug-reports:    https://github.com/quickdudley/arithcode/issues
+author:         Jeremy List
+maintainer:     quick.dudley@gmail.com
+copyright:      Copyright © 2018 Jeremy List
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+extra-source-files:
+    ChangeLog.md
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/quickdudley/arithcode
+
+library
+  exposed-modules:
+      Data.Arithcode
+  other-modules:
+      Paths_arithcode
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5,
+      transformers
+  default-language: Haskell2010
+
+test-suite arithcode-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_arithcode
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      arithcode
+    , base >=4.7 && <5
+  default-language: Haskell2010
