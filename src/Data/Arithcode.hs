@@ -64,9 +64,10 @@ widen ~(Interval al ah) ~(Interval bl bh) = let
   in Interval (s bl) (s bh)
 
 overlap :: Interval -> Interval -> Bool
-overlap a@(Interval al ah) b@(Interval bl bh)
-  | al > bl = overlap b a
-  | otherwise = ah > bl
+overlap a@(Interval al ah) b@(Interval bl bh) = case al `compare` bl of
+  LT -> ah > bl
+  EQ -> True
+  GT -> bh > al
 
 wantNext :: Interval -> Bool
 wantNext (Interval a b) = case a `compare` 0 of
