@@ -185,12 +185,12 @@ encodeIntegral l h = ACT (\c -> let
     [a0,b'] = map floor [a,b] :: [Integer]
     in if a0 == b' || e
       then let
-        a' = if e
-          then ceiling a
-          else a0
+        (a',e') = if e && a0 /= b'
+          then (ceiling a,True)
+          else (a0,False)
         r = c (fromIntegral a')
         in case map (subtract (fromIntegral a')) [a,b] of
-          _ | e -> r
+          _ | e' -> r
           [0,1] -> r
           [ar,br] -> I (\i' _ -> (narrow (Interval ar br) i',r))
       else I (\i' e' -> let
