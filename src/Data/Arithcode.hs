@@ -64,9 +64,10 @@ widen ~(Interval al ah) ~(Interval bl bh) = let
   in Interval (s bl) (s bh)
 
 overlap :: Interval -> Interval -> Bool
-overlap a@(Interval al ah) b@(Interval bl bh)
-  | al > bl = overlap b a
-  | otherwise = ah > bl
+overlap a@(Interval al ah) b@(Interval bl bh) = case al `compare` bl of
+  LT -> ah > bl
+  EQ -> True
+  GT -> bh > al
 
 wantNext :: Interval -> Bool
 wantNext (Interval a b) = case a `compare` 0 of
@@ -187,12 +188,12 @@ encodeIntegral l h = ACT (\c -> let
     [a0,b'] = map floor [a,b] :: [Integer]
     in if a0 == b' || e
       then let
-        a' = if e
-          then ceiling a
-          else a0
+        (a',e') = if e && a0 /= b'
+          then (ceiling a,True)
+          else (a0,False)
         r = c (fromIntegral a')
         in case map (subtract (fromIntegral a')) [a,b] of
-          _ | e -> r
+          _ | e' -> r
           [0,1] -> r
           [ar,br] -> I (\i' _ -> (narrow (Interval ar br) i',r))
       else I (\i' e' -> let
