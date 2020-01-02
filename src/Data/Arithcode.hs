@@ -133,10 +133,13 @@ runArithcodeT' :: Monad m => ArithcodeT m a -> m (Maybe Interval) -> m a
 runArithcodeT' (ACT z) s = go False (z R) (Interval 0 1) where
   go e (R a) _ = return a
   go e (A a) i = a >>= flip (go e) i
-  go e t@(I c) i = if wantNext i && not e
-    then s >>= \mi -> case mi of
-      Nothing -> go True t i
-    else let (i2,r) = c i e in go e r (narrow i i2)
+  go e t@(I c) i = let
+   (i',n) = c i e
+   in if wantNext i' && not e
+     then s >>= \mi -> case mi of
+       Nothing -> go True n i'
+       Just i2 -> go e n (narrow i' i2)
+     else go e n i'
 
 element :: [(Rational,a)] -> ArithcodeT m a
 element [] = error "\'element\' requires non-empty list"
