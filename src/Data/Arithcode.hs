@@ -151,16 +151,14 @@ element l = let
     map (\(p,v) -> (Leaf v,p)) $
     filter (\(p,_) -> p > 0) l
   in ACT (\c -> let
-    fin (Leaf a) _ = starve $ c a
-    fin (Node m l r) i@(Interval a _) = if m < a
-      then fin l (widen i (Interval 0 m))
-      else fin r (widen i (Interval m 1))
+    fin (Leaf a) = starve $ c a
+    fin (Node _ l _) = fin l
     go i n = case reduceTree i n of
       (Interval 0 1, Leaf a) -> c a
       (i1, Leaf a) -> step (c a) i1
       (i1, n@(Node _ _ _)) -> I (\mi2 -> case mi2 of
         Just i2 -> go (narrow i1 i2) n
-        Nothing -> starve $ step (fin n i1) i1
+        Nothing -> starve $ step (fin n) i1
        )
     in go (Interval 0 1) tree
    )
